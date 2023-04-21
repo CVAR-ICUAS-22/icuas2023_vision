@@ -451,6 +451,7 @@ class Yolov4(nn.Module):
         return output
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+use_cuda = True if device == 'cuda' else False
 
 def get_model_init():
     from tool.utils import load_class_names
@@ -471,8 +472,8 @@ def predict(model, class_names, img):
     width = 448
     height = 448
 
-    use_cuda = True
-    if use_cuda:
+    # use_cuda = True
+    if True:
         # model.cuda()
         model.to(device)
         sized = cv2.resize(img, (width, height))
