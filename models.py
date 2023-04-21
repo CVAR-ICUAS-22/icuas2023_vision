@@ -453,7 +453,7 @@ class Yolov4(nn.Module):
 def get_model_init():
     from tool.utils import load_class_names
     n_classes = 2
-    weightfile = "./checkpoints/Yolov4_epoch300.pth"
+    weightfile = "./checkpoints/Yolov4_epoch293.pth"
     namesfile = "./data/crack.names"
     model = Yolov4(yolov4conv137weight=None, n_classes=n_classes, inference=True)
 
