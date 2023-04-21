@@ -485,7 +485,8 @@ def predict(model, class_names, img):
                             # Because the first iteration is usually longer
             boxes = do_detect(model, sized, 0.1, 0.0, use_cuda)
 
-        img,total_detections=plot_boxes_cv2(img, boxes[0], 'results/{}'.format('xd'), class_names)
+        # img,total_detections=plot_boxes_cv2(img, boxes[0], 'results/{}'.format('xd'), class_names)  # FMB2
+        img,total_detections=plot_boxes_cv2(img, boxes[0], '', class_names)  # simulation
 
         return img, total_detections
 
