@@ -135,16 +135,13 @@ class CrackDetector():
         # cv_image_gray = cv2.cvtColor(cv_image, cv2.COLOR_BGR2GRAY)
         # self.canny(original_image, cv_image_gray)
 
-        cv2.imshow("Image window", cv_image)
+        # cv2.imshow("Image window", cv_image)
         cv2.waitKey(3)
 
     def timer_callback(self, event):
-        print('timer_callback')
         self.original_image = self.cv_image
         cv_image_gray = cv2.cvtColor(self.cv_image, cv2.COLOR_BGR2GRAY)
-        print('cv_image_gray')
         self.canny(self.cv_image, cv_image_gray)
-        print('finishing timer_callback')
         # cv2.waitKey(3)
 
     def camera_info_callback(self, msg):
