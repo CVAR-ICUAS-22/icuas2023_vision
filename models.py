@@ -449,7 +449,9 @@ class Yolov4(nn.Module):
 
         output = self.head(x20, x13, x6)
         return output
-    
+
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
 def get_model_init():
     from tool.utils import load_class_names
     n_classes = 2
@@ -457,7 +459,7 @@ def get_model_init():
     namesfile = "./data/crack.names"
     model = Yolov4(yolov4conv137weight=None, n_classes=n_classes, inference=True)
 
-    pretrained_dict = torch.load(weightfile, map_location=torch.device('cuda'))
+    pretrained_dict = torch.load(weightfile, map_location=device)
     model.load_state_dict(pretrained_dict)
     ('model loaded')
     
@@ -471,7 +473,8 @@ def predict(model, class_names, img):
 
     use_cuda = True
     if use_cuda:
-        model.cuda()
+        # model.cuda()
+        model.to(device)
         sized = cv2.resize(img, (width, height))
 
         from tool.utils import load_class_names, plot_boxes_cv2

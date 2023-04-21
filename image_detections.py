@@ -6,20 +6,17 @@ import copy
 import numpy as np
 from geometry_msgs.msg import Polygon, Point32
 from models import predict, get_model_init
-from sensor_msgs.msg import PointCloud2
-import message_filters
 
-class image_node():
+
+class CrackDetector():
     def __init__(self):
-        rospy.init_node('image_subscriber', anonymous=True)
+        rospy.init_node('crack_detector', anonymous=True)
 
         print('loading model...')
         self.model, self.class_names=get_model_init()
         print('model loaded')
         self.image_sub = rospy.Subscriber("/red/camera/color/image_raw", Image, self.image_callback)
-        # self.depth_image = rospy.Subscriber("/red/camera/depth/image_raw", Image, self.depth_image_callback)
         self.camera_info_sub = rospy.Subscriber("/red/camera/color/camera_info", CameraInfo, self.camera_info_callback)
-        # self.depth_points = rospy.Subscriber("/red/camera/depth_registered/points", PointCloud2, self.depth_points_callback)
         
         # public new topic
         self.image_pub = rospy.Publisher("/image/detections", Image, queue_size=10)
@@ -34,13 +31,6 @@ class image_node():
         self.cv_image = None
         self.original_image = None
         self.timer = rospy.Timer(rospy.Duration(0.5), self.timer_callback)
-        # image_sub = message_filters.Subscriber("/red/camera/color/image_raw", Image)
-        # depth_image = message_filters.Subscriber("/red/camera/depth/image_raw", Image)
-        # depth_points = message_filters.Subscriber("/red/camera/depth_registered/points", PointCloud2)
-
-
-        # ts = message_filters.TimeSynchronizer([image_sub, depth_image, depth_points], 10)
-        # ts.registerCallback(self.callback)
 
         rospy.spin()
     
@@ -160,27 +150,7 @@ class image_node():
     def camera_info_callback(self, msg):
         # print(msg)
         pass
-
-    def depth_points_callback(self, msg):
-        pass
-
-    def depth_image_callback(self, msg):
-        pass
-        # depth_image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='passthrough')
-        # depth_array = np.array(depth_image, dtype=np.float32)   
-        # np.save("depth_img.npy", depth_array)
-        # rospy.loginfo(depth_array)
-        # #To save image as png
-        # # Apply colormap on depth image (image must be converted to 8-bit per pixel first)
-        # depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(depth_image, alpha=0.03), cv2.COLORMAP_JET)
-        # cv2.imshow("Depth Image window", depth_image)
-        # cv2.waitKey(3)
-
-    # def callback(self, ros_raw_image, ros_depth_image, depth_points):
-    #     self.image_callback(ros_raw_image)
-    #     self.depth_image_callback(ros_depth_image)
-    #     self.depth_points_callback(depth_points)
         
 
 if __name__ == '__main__':
-    image_node()
+    CrackDetector()
