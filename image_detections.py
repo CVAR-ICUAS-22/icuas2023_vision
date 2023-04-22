@@ -8,16 +8,17 @@ from geometry_msgs.msg import Polygon, Point32
 from models import predict, get_model_init
 
 
-class CrackDetector():
-    def __init__(self):
+class CrackDetector:
+    def __init__(self, debug=False):
         rospy.init_node('crack_detector', anonymous=True)
+        self.debug = debug
 
         print('loading model...')
         self.model, self.class_names=get_model_init()
         print('model loaded')
         self.image_sub = rospy.Subscriber("/red/camera/color/image_raw", Image, self.image_callback)
         self.camera_info_sub = rospy.Subscriber("/red/camera/color/camera_info", CameraInfo, self.camera_info_callback)
-        
+
         # public new topic
         self.image_pub = rospy.Publisher("/image/detections", Image, queue_size=10)
         self.detections_cracks = rospy.Publisher("/image/detections_cracks", Image, queue_size=10)
@@ -33,7 +34,7 @@ class CrackDetector():
         self.timer = rospy.Timer(rospy.Duration(0.5), self.timer_callback)
 
         rospy.spin()
-    
+
     def calculate_iou(self, boxA, boxB):
         xA = max(boxA[0], boxB[0])
         yA = max(boxA[1], boxB[1])
@@ -117,16 +118,12 @@ class CrackDetector():
         # cv2.imshow("Detections", cv_image)
         # cv2.imshow("Detections_cracks", original_image)
 
-    def find_countours(self, cv_image, cv_image_gray):
-        cnt, hierarchy = cv2.findContours(cv_image_gray, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
-        cv2.drawContours(cv_image,cnt,-1,(0,0,255), 2)
-        cv2.imshow("Image findContours", cv_image)
-
     def image_callback(self, msg):
         self.cv_image = self.bridge.imgmsg_to_cv2(msg, "bgr8")
 
-        cv2.imshow("Image window", self.cv_image)
-        cv2.waitKey(3)
+        if self.debug:
+            cv2.imshow("Image window", self.cv_image)
+            cv2.waitKey(3)
 
     def timer_callback(self, event):
         self.original_image = copy.deepcopy(self.cv_image)
@@ -139,4 +136,4 @@ class CrackDetector():
 
 
 if __name__ == '__main__':
-    CrackDetector()
+    CrackDetector(debug=False)
