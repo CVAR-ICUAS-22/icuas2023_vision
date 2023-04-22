@@ -123,7 +123,7 @@ def plot_boxes_cv2(img, boxes, savename=None, class_names=None, color=None):
             rgb = color
         else:
             rgb = (255, 0, 0)
-        msg = ''
+        msg = 'crack'
         if len(box) >= 7 and class_names:
             cls_conf = box[5]
             if cls_conf < 0.5:
