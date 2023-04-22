@@ -102,8 +102,6 @@ class CrackDetector():
                             alpha = 10
                             image_cut = self.original_image[y-alpha:y+alpha+h,x-alpha:x+w+alpha]
 
-                            # cv2.imwrite('image_cut.png', image_cut)
-
                             start_x, start_y = x-alpha, y-alpha
                             image_detect, total_detections = predict(self.model, self.class_names, image_cut)
 
@@ -111,7 +109,7 @@ class CrackDetector():
                                 self.original_image = self.paint(detection, self.original_image, start_x, start_y)
 
                             self.detections_cracks.publish(self.bridge.cv2_to_imgmsg(image_detect, "bgr8"))
-                            self.original_image_detections_cracks.publish(self.bridge.cv2_to_imgmsg(image_detect, "bgr8"))
+                            self.original_image_detections_cracks.publish(self.bridge.cv2_to_imgmsg(self.original_image, "bgr8"))
         #                     cv2.imshow("image_detect", image_detect)
 
         # cv2.imshow("Image canny", canny)
@@ -124,9 +122,6 @@ class CrackDetector():
         cv2.imshow("Image findContours", cv_image)
 
     def image_callback(self, msg):
-        # if self.original_image is not None:
-        #     cv2.imshow("original_image", self.original_image)
-
         self.cv_image = self.bridge.imgmsg_to_cv2(msg, "bgr8")
 
         cv2.imshow("Image window", self.cv_image)
