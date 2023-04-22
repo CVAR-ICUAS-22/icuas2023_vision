@@ -89,7 +89,7 @@ class CrackDetector():
 
                         if not same:
                             currents_detections.append([x, y, x + w, y + h])
-                            cv2.rectangle(cv_image, (x, y), (x + w, y + h), (36,255,12), 2)
+                            # cv2.rectangle(cv_image, (x, y), (x + w, y + h), (36,255,12), 2)
                             self.image_pub.publish(self.bridge.cv2_to_imgmsg(cv_image, "bgr8"))
                             pol = Polygon()
                             pol.points.append(Point32(x, y, 0))
@@ -114,40 +114,33 @@ class CrackDetector():
                             self.original_image_detections_cracks.publish(self.bridge.cv2_to_imgmsg(image_detect, "bgr8"))
         #                     cv2.imshow("image_detect", image_detect)
 
-                        
         # cv2.imshow("Image canny", canny)
         # cv2.imshow("Detections", cv_image)
         # cv2.imshow("Detections_cracks", original_image)
-
 
     def find_countours(self, cv_image, cv_image_gray):
         cnt, hierarchy = cv2.findContours(cv_image_gray, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
         cv2.drawContours(cv_image,cnt,-1,(0,0,255), 2)
         cv2.imshow("Image findContours", cv_image)
-    
+
     def image_callback(self, msg):
-        if self.original_image is not None:
-            cv2.imshow("original_image", self.original_image)
+        # if self.original_image is not None:
+        #     cv2.imshow("original_image", self.original_image)
 
-        cv_image = self.bridge.imgmsg_to_cv2(msg, "bgr8")
-        self.cv_image = copy.deepcopy(cv_image)
+        self.cv_image = self.bridge.imgmsg_to_cv2(msg, "bgr8")
 
-        # cv_image_gray = cv2.cvtColor(cv_image, cv2.COLOR_BGR2GRAY)
-        # self.canny(original_image, cv_image_gray)
-
-        # cv2.imshow("Image window", cv_image)
+        cv2.imshow("Image window", self.cv_image)
         cv2.waitKey(3)
 
     def timer_callback(self, event):
-        self.original_image = self.cv_image
+        self.original_image = copy.deepcopy(self.cv_image)
         cv_image_gray = cv2.cvtColor(self.cv_image, cv2.COLOR_BGR2GRAY)
         self.canny(self.cv_image, cv_image_gray)
-        # cv2.waitKey(3)
 
     def camera_info_callback(self, msg):
         # print(msg)
         pass
-        
+
 
 if __name__ == '__main__':
     CrackDetector()
