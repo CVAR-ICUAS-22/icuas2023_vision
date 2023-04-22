@@ -112,7 +112,7 @@ def plot_boxes_cv2(img, boxes, savename=None, class_names=None, color=None):
 
     width = img.shape[1]
     height = img.shape[0]
-    for i in range(len(boxes)):
+    for i, box in enumerate(boxes):
         box = boxes[i]
         x1 = int(box[0] * width)
         y1 = int(box[1] * height)
@@ -123,6 +123,7 @@ def plot_boxes_cv2(img, boxes, savename=None, class_names=None, color=None):
             rgb = color
         else:
             rgb = (255, 0, 0)
+        msg = ''
         if len(box) >= 7 and class_names:
             cls_conf = box[5]
             if cls_conf < 0.5:
