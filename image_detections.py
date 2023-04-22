@@ -108,8 +108,9 @@ class CrackDetector():
                             for detection in total_detections:
                                 self.original_image = self.paint(detection, self.original_image, start_x, start_y)
 
-                            self.detections_cracks.publish(self.bridge.cv2_to_imgmsg(image_detect, "bgr8"))
-                            self.original_image_detections_cracks.publish(self.bridge.cv2_to_imgmsg(self.original_image, "bgr8"))
+                            if total_detections:
+                                self.detections_cracks.publish(self.bridge.cv2_to_imgmsg(image_detect, "bgr8"))
+                                self.original_image_detections_cracks.publish(self.bridge.cv2_to_imgmsg(self.original_image, "bgr8"))
         #                     cv2.imshow("image_detect", image_detect)
 
         # cv2.imshow("Image canny", canny)
