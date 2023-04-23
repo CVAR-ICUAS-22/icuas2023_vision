@@ -115,7 +115,7 @@ class CrackDetector:
                             #offset alpha
                             alpha = 10
                             image_cut = self.original_image[y-alpha:y+alpha+h,x-alpha:x+w+alpha]
-                            if image_cut.shape[0] <= 0 and image_cut.shape[1] <= 0:
+                            if image_cut.shape[0] <= 10 or image_cut.shape[1] <= 10:
                                 continue
                             ratio = float(image_cut.shape[1])/image_cut.shape[0]
                             if ratio < 0.5:
