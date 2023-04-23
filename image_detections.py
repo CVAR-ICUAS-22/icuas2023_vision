@@ -44,8 +44,11 @@ class CrackDetector:
         yA = max(boxA[1], boxB[1])
         xB = min(boxA[2], boxB[2])
         yB = min(boxA[3], boxB[3])
+
+        intersection = max(0, xB - xA + 1) * max(0, yB - yA + 1) 
+        total = (boxA[2] - boxA[0] + 1) * (boxA[3] - boxA[1] + 1) + (boxB[2] - boxB[0] + 1) * (boxB[3] - boxB[1] + 1)
         # compute the area of intersection rectangle
-        return max(0, xB - xA + 1) * max(0, yB - yA + 1)
+        return intersection / float(total - intersection)
 
     def paint(self, detection, img, start_x, start_y):
         msg = detection['msg']
@@ -81,20 +84,25 @@ class CrackDetector:
                 x, y, w, h = cv2.boundingRect(c)
                 ratio = float(w)/h
                 if ratio >= 0.9 and ratio <= 1.1:
-                    x, y, w, h = cv2.boundingRect(c)
-                    if w > 65 and h > 65 and w < 95 and h < 95:
-                        print(w, h)
-                        same=False
+                    # x, y, w, h = cv2.boundingRect(c)
+                    # if w > 65 and h > 65 and w < 95 and h < 95:
+                    if w > 50 and h > 50 and w < 260 and h < 260:
+                    # if True:
+                        # print(w, h)
+                        # same=False
                         for c in currents_detections:
                             iou = self.calculate_iou(c, [x, y, x + w, y + h])
-                            print('iou', iou)
+                            # print('iou', iou)
                             if iou > 0.5:
-                                same=True
-                                break
+                                # same=True
+                                # break
+                                # Already detected
+                                continue
 
-                        if not same:
+                        # if not same:
+                        if True:
                             currents_detections.append([x, y, x + w, y + h])
-                            # cv2.rectangle(cv_image, (x, y), (x + w, y + h), (36,255,12), 2)
+                            cv2.rectangle(cv_image, (x, y), (x + w, y + h), (36,255,12), 2)
                             self.image_pub.publish(self.bridge.cv2_to_imgmsg(cv_image, "bgr8"))
                             pol = Polygon()
                             pol.points.append(Point32(x, y, 0))
@@ -106,6 +114,8 @@ class CrackDetector:
                             #offset alpha
                             alpha = 10
                             image_cut = self.original_image[y-alpha:y+alpha+h,x-alpha:x+w+alpha]
+                            if image_cut.shape[0] <= 0 and image_cut.shape[1] <= 0:
+                                continue
 
                             start_x, start_y = x-alpha, y-alpha
                             image_detect, total_detections = predict(self.model, self.class_names, image_cut)
