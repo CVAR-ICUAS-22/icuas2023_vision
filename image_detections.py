@@ -148,9 +148,12 @@ class CrackDetector:
             cv2.waitKey(3)
 
     def timer_callback(self, event):
-        self.original_image = copy.deepcopy(self.cv_image)
-        cv_image_gray = cv2.cvtColor(self.cv_image, cv2.COLOR_BGR2GRAY)
-        self.canny(self.cv_image, cv_image_gray)
+        try:
+            self.original_image = copy.deepcopy(self.cv_image)
+            cv_image_gray = cv2.cvtColor(self.cv_image, cv2.COLOR_BGR2GRAY)
+            self.canny(self.cv_image, cv_image_gray)
+        except:
+            pass
 
     def camera_info_callback(self, msg):
         # print(msg)
