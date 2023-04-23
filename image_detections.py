@@ -26,7 +26,8 @@ class CrackDetector:
         # public new topic
         self.image_pub = rospy.Publisher("/image/detections", Image, queue_size=10)
         self.detections_cracks = rospy.Publisher("/image/detections_cracks", Image, queue_size=10)
-        self.original_image_detections_cracks = rospy.Publisher("/image/original_image_detections_cracks", Image, queue_size=10)
+        # self.original_image_detections_cracks = rospy.Publisher("/image/original_image_detections_cracks", Image, queue_size=10)
+        self.original_image_detections_cracks = rospy.Publisher("/red/crack_image_annotated", Image, queue_size=10)
 
         #publisher an array ros message
         self.bbox_detections = rospy.Publisher("/bbox/detections", Polygon , queue_size=10)
@@ -116,6 +117,10 @@ class CrackDetector:
                             image_cut = self.original_image[y-alpha:y+alpha+h,x-alpha:x+w+alpha]
                             if image_cut.shape[0] <= 0 and image_cut.shape[1] <= 0:
                                 continue
+                            ratio = float(image_cut.shape[1])/image_cut.shape[0]
+                            if ratio < 0.5:
+                                continue
+                            # print("Image cut size:", image_cut.shape)
 
                             start_x, start_y = x-alpha, y-alpha
                             image_detect, total_detections = predict(self.model, self.class_names, image_cut)
