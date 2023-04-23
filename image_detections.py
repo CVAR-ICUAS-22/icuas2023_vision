@@ -18,7 +18,7 @@ class CrackDetector:
         self.debug = debug
 
         print('loading model...')
-        self.model, self.class_names=get_model_init()
+        self.model, self.class_names=get_model_init(True)
         print('model loaded')
         self.image_sub = rospy.Subscriber("/red/camera/color/image_raw", Image, self.image_callback)
         self.camera_info_sub = rospy.Subscriber("/red/camera/color/camera_info", CameraInfo, self.camera_info_callback)

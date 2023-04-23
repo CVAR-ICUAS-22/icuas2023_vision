@@ -453,11 +453,18 @@ class Yolov4(nn.Module):
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 use_cuda = True if device == 'cuda' else False
 
-def get_model_init():
+def get_model_init(use_ros: bool = False):
     from tool.utils import load_class_names
+    preamble="."
+    if (use_ros):
+        import rospkg
+        # find path to package
+        path = rospkg.RosPack().get_path('icuas2023_vision')
+        print(f"Found package at {path}")
+        preamble = path
     n_classes = 2
-    weightfile = "./checkpoints/Yolov4_epoch293.pth"
-    namesfile = "./data/crack.names"
+    weightfile = preamble + "/checkpoints/Yolov4_epoch293.pth"
+    namesfile = preamble + "/data/crack.names"
     model = Yolov4(yolov4conv137weight=None, n_classes=n_classes, inference=True)
 
     pretrained_dict = torch.load(weightfile, map_location=device)
