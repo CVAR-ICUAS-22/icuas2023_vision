@@ -1,3 +1,4 @@
+#!python
 import rospy
 from sensor_msgs.msg import Image, CameraInfo
 from cv_bridge import CvBridge, CvBridgeError
@@ -5,7 +6,10 @@ import cv2
 import copy
 import numpy as np
 from geometry_msgs.msg import Polygon, Point32
-from models import predict, get_model_init
+# from models import predict, get_model_init
+# from models import 
+from models2 import predict, get_model_init
+
 
 
 class CrackDetector:
