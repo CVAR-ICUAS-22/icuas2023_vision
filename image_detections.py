@@ -72,7 +72,9 @@ class CrackDetector:
 
     def canny(self, cv_image, cv_image_gray):
         cv_blur = cv2.GaussianBlur(cv_image_gray, (5, 5), 0)
-        canny = cv2.Canny(cv_blur, 150, 180)
+        # cv_blur = cv_image_gray
+        # canny = cv2.Canny(cv_blur, 150, 180)
+        canny = cv2.Canny(cv_blur, 50, 80)
         kernel = np.ones((5,5),np.uint8)
         dilation = cv2.dilate(canny,kernel,iterations = 1)
 
@@ -135,6 +137,7 @@ class CrackDetector:
 
         # cv2.imshow("Image canny", canny)
         # cv2.imshow("Detections", cv_image)
+        # cv2.waitKey(3)
         # cv2.imshow("Detections_cracks", original_image)
 
     def image_callback(self, msg):
