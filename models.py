@@ -7,6 +7,9 @@ import copy
 import cv2
 import os
 
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+use_cuda = True if device == 'cuda' else False
+
 class Mish(torch.nn.Module):
     def __init__(self):
         super().__init__()
@@ -450,8 +453,6 @@ class Yolov4(nn.Module):
         output = self.head(x20, x13, x6)
         return output
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-use_cuda = True if device == 'cuda' else False
 
 def get_model_init():
     from tool.utils import load_class_names
@@ -463,6 +464,8 @@ def get_model_init():
     pretrained_dict = torch.load(weightfile, map_location=device)
     model.load_state_dict(pretrained_dict)
     ('model loaded')
+    print(f'Using device: {device}')
+    print(f'Use cude: {use_cuda}')
     
     class_names = load_class_names(namesfile)
 
@@ -532,12 +535,13 @@ if __name__ == "__main__":
         namesfile = "./data/crack.names"
 
     model = Yolov4(yolov4conv137weight=None, n_classes=n_classes, inference=True)
-    pretrained_dict = torch.load(weightfile, map_location=torch.device('cuda'))
+    # pretrained_dict = torch.load(weightfile, map_location=torch.device('cuda'))
+    pretrained_dict = torch.load(weightfile, map_location=device)
 
     print('pretrained_dict')
     model.load_state_dict(pretrained_dict)
 
-    use_cuda = True
+    # use_cuda = True
     if use_cuda:
         model.cuda()
 
