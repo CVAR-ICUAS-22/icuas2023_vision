@@ -95,7 +95,7 @@ class CrackDetector:
                         # same=False
                         for c in currents_detections:
                             iou = self.calculate_iou(c, [x, y, x + w, y + h])
-                            # print('iou', iou)
+                            print('iou', iou)
                             if iou > 0.5:
                                 # same=True
                                 # break
@@ -107,6 +107,7 @@ class CrackDetector:
                             currents_detections.append([x, y, x + w, y + h])
                             cv2.rectangle(cv_image, (x, y), (x + w, y + h), (36,255,12), 2)
                             self.image_pub.publish(self.bridge.cv2_to_imgmsg(cv_image, "bgr8"))
+                            print("Tile detected")
                             pol = Polygon()
                             pol.points.append(Point32(x, y, 0))
                             pol.points.append(Point32(x + w, y, 0))
@@ -133,6 +134,7 @@ class CrackDetector:
                             if total_detections:
                                 self.detections_cracks.publish(self.bridge.cv2_to_imgmsg(image_detect, "bgr8"))
                                 self.original_image_detections_cracks.publish(self.bridge.cv2_to_imgmsg(self.original_image, "bgr8"))
+                                print("Cracks detected")
         #                     cv2.imshow("image_detect", image_detect)
 
         # cv2.imshow("Image canny", canny)
