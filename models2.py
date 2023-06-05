@@ -6,6 +6,7 @@ from tool.yolo_layer import YoloLayer
 import copy
 import cv2
 import os
+from config_ICUAS import cfg
 
 class Mish(torch.nn.Module):
     def __init__(self):
@@ -459,8 +460,10 @@ else:
 
 # device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 # use_cuda = True if (device == 'cuda') else False
-print("device:", device)
-print("use_cuda:", use_cuda)
+#print("device:", device)
+#print("use_cuda:", use_cuda)
+
+
 
 def get_model_init(use_ros: bool = False):
     from tool.utils import load_class_names
@@ -471,26 +474,27 @@ def get_model_init(use_ros: bool = False):
         path = rospkg.RosPack().get_path('icuas2023_vision')
         print(f"Found package at {path}")
         preamble = path
+    
     n_classes = 2
-    weightfile = preamble + "/checkpoints/Yolov4_epoch293.pth"
-    namesfile = preamble + "/data/crack.names"
+    weightfile = preamble + cfg.weights_filename
+    namesfile = preamble + cfg.data_crack
     model = Yolov4(yolov4conv137weight=None, n_classes=n_classes, inference=True)
 
     pretrained_dict = torch.load(weightfile, map_location=device)
     model.load_state_dict(pretrained_dict)
-    ('model loaded')
     
     class_names = load_class_names(namesfile)
+
+    print('model loaded')
 
     return model, class_names
 
 def predict(model, class_names, img):
-    width = 448
-    height = 448
+    width = cfg.size_image[0]
+    height = cfg.size_image[1]
 
-    # use_cuda = True
-    if True:
-        # model.cuda()
+    if cfg.use_cuda:
+        
         model.to(device)
         sized = cv2.resize(img, (width, height))
 
@@ -499,7 +503,7 @@ def predict(model, class_names, img):
 
         for i in range(2):  # This 'for' loop is for speed check
                             # Because the first iteration is usually longer
-            boxes = do_detect(model, sized, 0.1, 0.0, use_cuda)
+            boxes = do_detect(model, sized, cfg.threshold, 0.0, cfg.use_cuda)
 
         # img,total_detections=plot_boxes_cv2(img, boxes[0], 'results/{}'.format('xd'), class_names)  # FMB2
         img,total_detections=plot_boxes_cv2(img, boxes[0], '', class_names)  # simulation
