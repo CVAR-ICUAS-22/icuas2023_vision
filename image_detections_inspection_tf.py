@@ -20,6 +20,16 @@ from models2 import predict, get_model_init
 class CrackDetector():
     """Crack Detector Node"""
 
+    # Subscribers
+    RUN_NODE_TOPIC = "/crack_detector/run"
+    COLOR_CAM_IMAGE_TOPIC = "/red/camera/color/image_raw"
+    COLOR_CAM_INFO_TOPIC = "/red/camera/color/camera_info"
+    # Publishers
+    TILE_DETECTION_TOPIC = "/red/crack_detector/tiles/image"
+    CRACK_DETECTION_TOPIC = "/red/crack_detector/crack/image"
+    CRACK_IN_ORIGINAL_IMAGE_TOPIC = "/red/crack_detector/crack/original_image"
+    TILE_BBOX_DETECTION_TOPIC = "/red/crack_detector/tiles/bbox"
+
     def __init__(self):
         rospy.init_node('crack_detector', anonymous=True)
 
@@ -35,23 +45,23 @@ class CrackDetector():
         self.listener = tf.TransformListener()
 
         self.flag_run_sub = rospy.Subscriber(
-            "/crack_detector/run", Bool, self.callback_flag_run)
+            self.RUN_NODE_TOPIC, Bool, self.callback_flag_run)
         self.image_sub = rospy.Subscriber(
-            "/red/camera/color/image_raw", Image, self.image_callback)
+            self.COLOR_CAM_IMAGE_TOPIC, Image, self.image_callback)
         self.camera_info_sub = rospy.Subscriber(
-            "/red/camera/color/camera_info", CameraInfo, self.camera_info_callback)
+            self.COLOR_CAM_INFO_TOPIC, CameraInfo, self.camera_info_callback)
 
         # public new topic
         self.image_pub = rospy.Publisher(
-            "/image/detections", Image, queue_size=10)
+            self.TILE_DETECTION_TOPIC, Image, queue_size=10)
         self.detections_cracks = rospy.Publisher(
-            "/image/detections_cracks", Image, queue_size=10)
+            self.CRACK_DETECTION_TOPIC, Image, queue_size=10)
         self.original_image_detections_cracks = rospy.Publisher(
-            "/image/original_image_detections_cracks", Image, queue_size=10)
+            self.CRACK_IN_ORIGINAL_IMAGE_TOPIC, Image, queue_size=10)
 
         # publisher an array ros message
         self.bbox_detections = rospy.Publisher(
-            "/bbox/detections", Polygon, queue_size=10)
+            self.TILE_BBOX_DETECTION_TOPIC, Polygon, queue_size=10)
 
         self.bridge = CvBridge()
         print('INIT')
