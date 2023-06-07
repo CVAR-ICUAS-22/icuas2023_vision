@@ -460,8 +460,8 @@ else:
 
 # device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 # use_cuda = True if (device == 'cuda') else False
-#print("device:", device)
-#print("use_cuda:", use_cuda)
+print("device:", device)
+print("use_cuda:", use_cuda)
 
 
 
