@@ -210,6 +210,8 @@ class CrackDetector():
     def detect_tiles(self, cv_image, cv_image_gray):
 
         original_image = copy.deepcopy(cv_image)
+        original_paint=copy.deepcopy(cv_image)
+
         _, img = cv2.threshold(cv_image_gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU, cv_image_gray)
 
         redBajo1 = np.array([0, 42, 0])
@@ -236,22 +238,24 @@ class CrackDetector():
 
             x, y, w, h = cv2.boundingRect(c)
 
-            if x > 200 and w > 70 and h > 70:
+            if x > 200 and w > 70 and h > 70 and abs(w-h) < 10:
                 cv2.rectangle(cv_image, (x, y), (x + w, y + h), (36,255,12), 2)
                 cv2.imwrite('canny.png', cv_image)
 
                 cv2.imshow('canny_tile', cv_image)
 
+                same = False
                 for c in currents_detections:
                     iou = self.calculate_iou(c, [x, y, x + w, y + h])
                     print('iou', iou)
                     if iou > 0.5:
+                        same = True
                         continue
 
 
-                if True:
+                if not same:
                     currents_detections.append([x, y, x + w, y + h])
-                    cv2.rectangle(cv_image, (x, y), (x + w, y + h), (36,255,12), 2)
+                    cv2.rectangle(original_paint, (x, y), (x + w, y + h), (36,255,12), 2)
                     #self.image_pub.publish(self.bridge.cv2_to_imgmsg(cv_image, "bgr8"))
                     cv2.imshow("Image window", cv_image)
                     print("Tile detected")
