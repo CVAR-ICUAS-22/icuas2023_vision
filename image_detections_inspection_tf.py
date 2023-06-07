@@ -26,7 +26,6 @@ class CrackDetector():
         self.model, self.class_names = get_model_init()
         self.run_flag = True  # TEMPORAL
         self.camera_matrix, self.dist_coeffs = None, None
-        self.translation, self.rotation = None, None
         self.drone_pose = {'position': None, 'orientation': None}
         self.detections_pose = []
         self.original_image = None
@@ -88,9 +87,11 @@ class CrackDetector():
         cv_image_gray = cv2.cvtColor(cv_image, cv2.COLOR_BGR2GRAY)
         tiles_detected = self.detect_tiles(cv_image, cv_image_gray)
         time = msg.header.stamp
+        frame = msg.header.frame_id
+        # frame = "red/camera"
 
         for tile in tiles_detected:
-            x, y, alpha, image_cut = tile
+            x, y, alpha, image_cut, translation, rotation = tile
             start_x, start_y = x-alpha, y-alpha
 
             # Detect cracks with the image cut (tile)
@@ -102,13 +103,12 @@ class CrackDetector():
 
             # self.R, self.translation calculated in calculate_3D_points with solvePnP
 
-            # AQUI HAY UN BUG MAS FEO QUE DAVID
-            quat = quaternions.mat2quat(self.rotation)
-            self.br.sendTransform((self.translation[0][0], self.translation[1][0], self.translation[2][0]),
+            quat = quaternions.mat2quat(rotation)
+            self.br.sendTransform((translation[0][0], translation[1][0], translation[2][0]),
                                   quat,
                                   time,
                                   "object",
-                                  "red/camera")
+                                  frame)
 
             try:
                 (trans, rot) = self.listener.lookupTransform(
@@ -267,21 +267,23 @@ class CrackDetector():
                     #######
                     # x1, y1, x2, y2 = x-cfg.margin_tile, y-cfg.margin_tile, x + \
                     #     w+cfg.margin_tile, y+cfg.margin_tile+h
-                    # self.rotation, self.translation = self.calculate_3D_points(
+                    # rotation, translation = self.calculate_3D_points(
                     #     [[x1, y1], [x1, y2], [x2, y2], [x2, y1]])
 
                     # countour points approxPolyDP
                     contour_points = cv2.approxPolyDP(
                         cnt, 0.01*cv2.arcLength(cnt, True), True)
                     points_sort = self.points_sort(contour_points)
-                    self.rotation, self.translation = self.calculate_3D_points([
-                        points_sort])
+                    rotation, translation = self.calculate_3D_points(
+                        [points_sort])
                     # -----------------------------------------------------
 
-                    # Return the top left corner of the tile, the margin and the image cut (the first are for draw the tile in the original image)
+                    # Return the top left corner of the tile, the margin and
+                    # the image cut (the first are for draw the tile in the original image)
                     image_cut = self.original_image[y-cfg.margin_tile:y +
                                                     cfg.margin_tile+h, x-cfg.margin_tile:x+w+cfg.margin_tile]
-                    results.append([x, y, cfg.margin_tile, image_cut])
+                    results.append(
+                        [x, y, cfg.margin_tile, image_cut, translation, rotation])
 
                     if cfg.debug:
                         cv2.rectangle(cv_image, (x, y),
