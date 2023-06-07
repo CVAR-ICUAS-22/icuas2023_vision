@@ -26,5 +26,5 @@ cfg.radius = 1 # Radius of the circle to detect. If detection is inside the circ
 cfg.use_cuda = True
 cfg.weights_filename = os.path.join(_BASE_DIR, 'checkpoints', 'Yolov4_epoch293.pth')
 cfg.data_crack = os.path.join(_BASE_DIR, 'data', 'crack.names')
-cfg.threshold = 0.7
+cfg.threshold = 0.8
 cfg.size_image = [448, 448] # Size of the image to detect. [width, height]

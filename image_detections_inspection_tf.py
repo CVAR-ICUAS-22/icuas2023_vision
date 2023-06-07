@@ -27,7 +27,7 @@ class CrackDetector():
     # Publishers
     TILE_DETECTION_TOPIC = "/red/crack_detector/tiles/image"
     CRACK_DETECTION_TOPIC = "/red/crack_detector/crack/image"
-    CRACK_IN_ORIGINAL_IMAGE_TOPIC = "/red/crack_detector/crack/original_image"
+    CRACK_IN_ORIGINAL_IMAGE_TOPIC = "/red/crack_image_annotated"
     TILE_BBOX_DETECTION_TOPIC = "/red/crack_detector/tiles/bbox"
 
     def __init__(self):
@@ -138,7 +138,7 @@ class CrackDetector():
                         if detection['detected'] == cfg.times_detected:
                             print('DETECTED ', cfg.times_detected, ' TIMES')
 
-                            self.run_flag = False
+                            # self.run_flag = False
                             for crack in crack_detections:
                                 original_image = self.paint(
                                     crack, cv_image, start_x, start_y)
@@ -240,7 +240,7 @@ class CrackDetector():
 
             if x > 200 and w > 70 and h > 70 and abs(w-h) < 10:
                 cv2.rectangle(cv_image, (x, y), (x + w, y + h), (36,255,12), 2)
-                cv2.imwrite('canny.png', cv_image)
+                # cv2.imwrite('canny.png', cv_image)
 
                 cv2.imshow('canny_tile', cv_image)
 
