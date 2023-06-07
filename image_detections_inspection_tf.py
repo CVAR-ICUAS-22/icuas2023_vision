@@ -262,12 +262,17 @@ class CrackDetector():
                     pol.points.append(Point32(x, y + h, 0))
                     #self.bbox_detections.publish(pol)
                     cv_image=original_image[y-0:y+0+h,x-0:x+w+0]
-                    resutls.append([x, y, 0, cv_image])
 
+                    x1, y1, x2, y2 = x, y, x + \
+                            w, y+h
+                    points_sort = self.points_sort([[x1, y1], [x1, y2], [x2, y2], [x2, y1]])
+                    rotation, translation = self.calculate_3D_points(
+                        [points_sort])
 
-
+                    resutls.append([x, y, 0, cv_image, translation, rotation])
 
         return resutls
+    
     def detect_tiles2(self, cv_image, cv_image_gray):
         """Detect tile in image
 
