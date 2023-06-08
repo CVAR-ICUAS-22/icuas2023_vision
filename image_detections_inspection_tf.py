@@ -384,7 +384,7 @@ class CrackDetector():
         redAlto1 = np.array([50, 60, 255])
 
         fondoBajo1 = np.array([50, 30, 0])
-        fondoAlto1 = np.array([255, 100, 255])
+        fondoAlto1 = np.array([255, 200, 255])
         
         frameHSV = cv2.cvtColor(cv_image, cv2.COLOR_BGR2HSV)
         cv2.imwrite('canny.png', frameHSV)
@@ -416,7 +416,7 @@ class CrackDetector():
                 cv2.imwrite('canny.png', cv_image)
                 alpha = 15
                 if x- alpha > 0 and y - alpha > 0 and x + alpha + w < cv_image.shape[1] and y + alpha + h < cv_image.shape[0]:
-                    cut_image_erode = dilate[y - alpha:y + alpha + h, x - alpha:x + alpha + w]
+                    cut_image_erode = fondoRed1[y - alpha:y + alpha + h, x - alpha:x + alpha + w]
                 else:
                     continue
                 #porcentaje de blancos
