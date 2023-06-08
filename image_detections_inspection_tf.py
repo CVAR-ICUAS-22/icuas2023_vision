@@ -379,7 +379,7 @@ class CrackDetector():
         return results
 
     def detect_tiles(self, cv_image, cv_image_gray):
-
+        final_image_draw=copy.deepcopy(cv_image)
         redBajo1 = np.array([0, 0, 50])
         redAlto1 = np.array([50, 60, 255])
 
@@ -453,7 +453,7 @@ class CrackDetector():
                 if cont_cnts == 1:
                     if x_ < 5 or y_ < 5 or x_ + w_ > cut_image_erode.shape[1] - 5 or y_ + h_ > cut_image_erode.shape[0] - 5:
                         continue 
-                    cv_image_final_cut=cv_image[y:y+h, x:x+w]
+                    cv_image_final_cut=final_image_draw[y:y+h, x:x+w]
                     cv2.rectangle(cv_image, (x, y), (x + w, y + h), (0,255,0), 2)
                     
                     points_sorted=self.points_sort([[x,y],[x+w,y],[x+w,y+h],[x,y+h]])
