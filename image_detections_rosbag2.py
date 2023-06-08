@@ -17,6 +17,10 @@ class CrackDetector:
         #folder = '0_ICUAS23_img'
         results_json = []
         cont=0
+        #rm content of folder
+        for f in os.listdir('resultados_gs'):
+            os.remove(os.path.join('resultados_gs', f))
+            
         for f in os.listdir(folder):
             cv_img = cv2.imread(os.path.join(folder, f))
             cracks_paints=copy.deepcopy(cv_img)
@@ -27,7 +31,9 @@ class CrackDetector:
             cv2.imshow('cv_img', cv_img)
 
             for result in results:
-                x, y, alpha, image_cut, mierda = result
+                x, y, alpha, image_cut, pts = result
+                if abs(pts[0][0] - pts[1][0] )< 80:
+                    continue
                 start_x, start_y = x-alpha, y-alpha
 
                 # Detect cracks with the image cut (tile)
@@ -41,10 +47,11 @@ class CrackDetector:
                     bbox = [float(x) * 448 for x in bbox_]
                     results_json.append([f, bbox])
                     cv2.imwrite('./resultados_gs/' + f, original_image)
+                break
 
             cv2.imshow("Image window", cv_img)
             cv2.imwrite('canny_prueba.png', cv_img)
-            cv2.waitKey(0)
+            # cv2.waitKey(0)
             # cv2.waitKey(0)
 
         #write in .txt file
